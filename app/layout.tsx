@@ -9,7 +9,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   // <CHANGE> Updated metadata for tech portfolio SEO
-  title: "Software Developer Portfolio | Next.js & Web Development",
+  title: "Nhan Dong Portfolio",
   description:
     "Full-stack software developer specializing in modern web technologies. View my projects, skills, and experience.",
   generator: "v0.app",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://yourdomain.com",
-    title: "Software Developer Portfolio",
+    title: "Nhan Dong Portfolio",
     description: "Full-stack software developer specializing in modern web technologies.",
     images: [
       {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Software Developer Portfolio",
+    title: "Nhan Dong Portfolio",
     description: "Full-stack software developer specializing in modern web technologies.",
     images: ["/og-image.png"],
   },
@@ -69,7 +69,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Person",
-              name: "Your Name",
+              name: "Nhan Dong",
               jobTitle: "Software Developer",
               url: "https://yourdomain.com",
               sameAs: ["https://github.com/yourname", "https://linkedin.com/in/yourname"],

@@ -5,7 +5,11 @@ import Link from "next/link"
 import { Menu, X, Sun, Moon } from "lucide-react"
 import { useTheme } from "next-themes"
 
-export function Navigation() {
+interface NavigationProps {
+  siteName?: string
+}
+
+export function Navigation({ siteName = "YourName" }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { theme, setTheme } = useTheme()
@@ -27,7 +31,7 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="text-xl font-bold text-primary">
-            &lt;YourName /&gt;
+            &lt;{siteName.replace(/\s+/g, "")} /&gt;
           </Link>
 
           {/* Desktop Menu */}

@@ -38,6 +38,9 @@ export async function HeroSection() {
         <div className="space-y-8">
           {/* Main Heading */}
           <div className="space-y-4">
+            <div className="inline-block px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium mb-2">
+              Hi, I&apos;m {name}
+            </div>
             <h1 className="text-text-balance">
               <span className="text-primary">{title}</span>
               <br />
