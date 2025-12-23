@@ -1,4 +1,11 @@
-import type { SanityImageSource } from '@sanity/image-url/lib/types/types'
+// Simplified Sanity image type (the internal type is not exported in newer @sanity/image-url versions)
+export type SanityImage = {
+    _type: 'image'
+    asset: {
+        _ref: string
+        _type: 'reference'
+    }
+}
 
 export interface SocialLinks {
     github?: string
@@ -50,7 +57,7 @@ export interface Project {
     title: string
     slug?: string
     description: string
-    image?: SanityImageSource
+    image?: SanityImage
     technologies?: string[]
     liveUrl?: string
     githubUrl?: string

@@ -7,8 +7,10 @@ const nextConfig: NextConfig = {
   // Silence some hydration warnings from Sanity Studio
   reactStrictMode: false,
 
-  // Adding a custom webpack config forces Next.js to use Webpack instead of Turbopack
-  // as of current versions, ensuring stable operation on Windows for Sanity Studio.
+  // Empty turbopack config to silence the build error in Next.js 16
+  turbopack: {},
+
+  // Adding a custom webpack config for fallback/compatibility
   webpack: (config) => {
     return config;
   },
