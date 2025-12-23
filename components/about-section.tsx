@@ -1,22 +1,33 @@
-import { Award, Rocket, Lightbulb } from "lucide-react"
+import { Award, Rocket, Lightbulb, Code2, Palette, Server, Database, GitBranch, Zap } from "lucide-react"
+import {
+  client,
+  profileQuery,
+  experiencesQuery,
+  educationQuery,
+  siteSettingsQuery,
+  type Profile,
+  type Experience,
+  type Education,
+  type SiteSettings,
+} from "@/lib/sanity"
 
-interface Experience {
-  year: string
-  company: string
-  position: string
-  description: string
-  highlights: string[]
+// Icon mapping
+const iconMap: Record<string, React.ReactNode> = {
+  Rocket: <Rocket className="w-5 h-5 text-accent" />,
+  Lightbulb: <Lightbulb className="w-5 h-5 text-accent" />,
+  Award: <Award className="w-5 h-5 text-accent" />,
+  Code2: <Code2 className="w-5 h-5 text-accent" />,
+  Palette: <Palette className="w-5 h-5 text-accent" />,
+  Server: <Server className="w-5 h-5 text-accent" />,
+  Database: <Database className="w-5 h-5 text-accent" />,
+  GitBranch: <GitBranch className="w-5 h-5 text-accent" />,
+  Zap: <Zap className="w-5 h-5 text-accent" />,
 }
 
-interface Education {
-  year: string
-  school: string
-  degree: string
-  field: string
-}
-
-const experiences: Experience[] = [
+// Default fallback data
+const defaultExperiences: Experience[] = [
   {
+    _id: "1",
     year: "2023 - Present",
     company: "Tech Innovators Inc.",
     position: "Senior Full-Stack Developer",
@@ -24,6 +35,7 @@ const experiences: Experience[] = [
     highlights: ["Led 5+ major projects", "Tech stack: Next.js, React, Node.js, PostgreSQL", "Team of 4 developers"],
   },
   {
+    _id: "2",
     year: "2021 - 2023",
     company: "Digital Solutions Co.",
     position: "Full-Stack Developer",
@@ -31,6 +43,7 @@ const experiences: Experience[] = [
     highlights: ["Built 15+ production applications", "Improved performance by 40%", "Led frontend refactoring"],
   },
   {
+    _id: "3",
     year: "2019 - 2021",
     company: "StartUp Labs",
     position: "Junior Developer",
@@ -39,14 +52,16 @@ const experiences: Experience[] = [
   },
 ]
 
-const education: Education[] = [
+const defaultEducation: Education[] = [
   {
+    _id: "1",
     year: "2019",
     school: "Tech University",
     degree: "Bachelor of Science",
     field: "Computer Science",
   },
   {
+    _id: "2",
     year: "2020",
     school: "Online Platform",
     degree: "Professional Certificate",
@@ -54,7 +69,45 @@ const education: Education[] = [
   },
 ]
 
-export function AboutSection() {
+const defaultProfile: Profile = {
+  aboutTitle: "Passionate Developer",
+  aboutBio: "I'm a full-stack developer with 5+ years of experience building web applications. I love turning ideas into reality through clean, efficient code and thoughtful design.",
+  highlights: [
+    { icon: "Rocket", title: "Problem Solver", description: "I enjoy tackling complex challenges with creative solutions" },
+    { icon: "Lightbulb", title: "Continuous Learner", description: "Always exploring new technologies and best practices" },
+    { icon: "Award", title: "Quality Focused", description: "I prioritize clean code, performance, and user experience" },
+  ],
+}
+
+async function getAboutData() {
+  try {
+    const [profile, experiences, education, settings] = await Promise.all([
+      client.fetch<Profile>(profileQuery),
+      client.fetch<Experience[]>(experiencesQuery),
+      client.fetch<Education[]>(educationQuery),
+      client.fetch<SiteSettings>(siteSettingsQuery),
+    ])
+
+    return {
+      profile: profile || defaultProfile,
+      experiences: experiences?.length ? experiences : defaultExperiences,
+      education: education?.length ? education : defaultEducation,
+      resumeUrl: settings?.resumeUrl || "/resume.pdf",
+    }
+  } catch (error) {
+    console.error("Error fetching about data:", error)
+    return {
+      profile: defaultProfile,
+      experiences: defaultExperiences,
+      education: defaultEducation,
+      resumeUrl: "/resume.pdf",
+    }
+  }
+}
+
+export async function AboutSection() {
+  const { profile, experiences, education, resumeUrl } = await getAboutData()
+
   return (
     <section id="about" className="py-20 bg-secondary/5">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,56 +115,35 @@ export function AboutSection() {
           {/* About Content - Left Side */}
           <div className="lg:col-span-1 animate-fade-in">
             <span className="text-accent font-semibold text-sm uppercase tracking-wider">About Me</span>
-            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-foreground">Passionate Developer</h2>
+            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-foreground">{profile.aboutTitle}</h2>
 
             <div className="mt-8 space-y-4">
               {/* Bio */}
               <p className="text-foreground/70 leading-relaxed">
-                I'm a full-stack developer with 5+ years of experience building web applications. I love turning ideas
-                into reality through clean, efficient code and thoughtful design.
+                {profile.aboutBio}
               </p>
 
               {/* Highlights */}
               <div className="space-y-4 pt-4">
-                <div className="flex gap-4">
-                  <div className="p-3 rounded-lg bg-accent/10">
-                    <Rocket className="w-5 h-5 text-accent" />
+                {profile.highlights?.map((highlight, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="p-3 rounded-lg bg-accent/10">
+                      {iconMap[highlight.icon || "Rocket"] || <Rocket className="w-5 h-5 text-accent" />}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-foreground">{highlight.title}</h4>
+                      <p className="text-sm text-foreground/60">
+                        {highlight.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Problem Solver</h4>
-                    <p className="text-sm text-foreground/60">
-                      I enjoy tackling complex challenges with creative solutions
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="p-3 rounded-lg bg-accent/10">
-                    <Lightbulb className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Continuous Learner</h4>
-                    <p className="text-sm text-foreground/60">Always exploring new technologies and best practices</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <div className="p-3 rounded-lg bg-accent/10">
-                    <Award className="w-5 h-5 text-accent" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Quality Focused</h4>
-                    <p className="text-sm text-foreground/60">
-                      I prioritize clean code, performance, and user experience
-                    </p>
-                  </div>
-                </div>
+                ))}
               </div>
 
               {/* CTA */}
               <div className="pt-6">
                 <a
-                  href="/resume.pdf"
+                  href={resumeUrl}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-accent-foreground rounded-lg font-semibold hover:bg-accent/90 transition-all"
                 >
                   Download Resume
@@ -127,9 +159,9 @@ export function AboutSection() {
               <h3 className="text-2xl font-bold text-foreground mb-8">Experience</h3>
 
               <div className="space-y-8">
-                {experiences.map((exp, index) => (
+                {experiences.map((exp) => (
                   <div
-                    key={index}
+                    key={exp._id}
                     className="relative pl-6 pb-8 border-l-2 border-accent/30 hover:border-accent transition-colors"
                   >
                     {/* Timeline dot */}
@@ -143,14 +175,16 @@ export function AboutSection() {
                       <p className="text-foreground/70 text-sm pt-2">{exp.description}</p>
 
                       {/* Highlights */}
-                      <ul className="pt-3 space-y-1">
-                        {exp.highlights.map((highlight) => (
-                          <li key={highlight} className="flex gap-2 text-sm text-foreground/60">
-                            <span className="text-accent">✓</span>
-                            {highlight}
-                          </li>
-                        ))}
-                      </ul>
+                      {exp.highlights && exp.highlights.length > 0 && (
+                        <ul className="pt-3 space-y-1">
+                          {exp.highlights.map((highlight) => (
+                            <li key={highlight} className="flex gap-2 text-sm text-foreground/60">
+                              <span className="text-accent">✓</span>
+                              {highlight}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -162,9 +196,9 @@ export function AboutSection() {
               <h3 className="text-2xl font-bold text-foreground mb-8">Education</h3>
 
               <div className="space-y-6">
-                {education.map((edu, index) => (
+                {education.map((edu) => (
                   <div
-                    key={index}
+                    key={edu._id}
                     className="p-4 rounded-lg bg-card border border-border hover:border-accent/50 transition-colors"
                   >
                     <div className="flex justify-between items-start mb-2">

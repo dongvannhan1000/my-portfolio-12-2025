@@ -1,59 +1,59 @@
 import { ExternalLink, Github } from "lucide-react"
+import { client, projectsQuery, urlFor, type Project } from "@/lib/sanity"
 
-interface Project {
-  id: string
-  title: string
-  description: string
-  image: string
-  technologies: string[]
-  liveUrl?: string
-  githubUrl?: string
-}
-
-const projects: Project[] = [
+// Default fallback data
+const defaultProjects: Project[] = [
   {
-    id: "1",
+    _id: "1",
     title: "E-Commerce Platform",
     description:
       "Full-stack e-commerce solution with real-time inventory management, payment processing, and admin dashboard.",
-    image: "/modern-ecommerce-platform.jpg",
     technologies: ["Next.js", "TypeScript", "PostgreSQL", "Stripe", "Tailwind CSS"],
     liveUrl: "https://example.com",
     githubUrl: "https://github.com",
   },
   {
-    id: "2",
+    _id: "2",
     title: "Task Management App",
     description:
       "Collaborative task management application with real-time updates, team features, and productivity analytics.",
-    image: "/task-management-dashboard.jpg",
     technologies: ["React", "Firebase", "Material UI", "WebSocket"],
     liveUrl: "https://example.com",
     githubUrl: "https://github.com",
   },
   {
-    id: "3",
+    _id: "3",
     title: "AI Content Generator",
     description:
       "Intelligent content generation tool powered by GPT-4, with custom templates and bulk processing capabilities.",
-    image: "/ai-content-generation-tool.jpg",
     technologies: ["Next.js", "OpenAI API", "Vercel AI SDK", "Supabase"],
     liveUrl: "https://example.com",
     githubUrl: "https://github.com",
   },
   {
-    id: "4",
+    _id: "4",
     title: "Data Visualization Dashboard",
     description:
       "Interactive analytics dashboard with real-time data visualization, custom reports, and data export features.",
-    image: "/analytics-data-visualization.jpg",
     technologies: ["React", "D3.js", "Node.js", "MongoDB", "Socket.io"],
     liveUrl: "https://example.com",
     githubUrl: "https://github.com",
   },
 ]
 
-export function ProjectsSection() {
+async function getProjects(): Promise<Project[]> {
+  try {
+    const projects = await client.fetch<Project[]>(projectsQuery)
+    return projects?.length ? projects : defaultProjects
+  } catch (error) {
+    console.error("Error fetching projects:", error)
+    return defaultProjects
+  }
+}
+
+export async function ProjectsSection() {
+  const projects = await getProjects()
+
   return (
     <section id="projects" className="py-20 bg-secondary/5">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,14 +71,14 @@ export function ProjectsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <div
-              key={project.id}
+              key={project._id}
               className="group relative bg-card rounded-xl overflow-hidden border border-border hover:border-accent/50 transition-all duration-300 animate-fade-in"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Image Container */}
               <div className="relative h-64 md:h-48 overflow-hidden bg-secondary/20">
                 <img
-                  src={project.image || "/placeholder.svg"}
+                  src={project.image ? urlFor(project.image).width(600).height(400).url() : "/placeholder.svg"}
                   alt={project.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -96,7 +96,7 @@ export function ProjectsSection() {
 
                 {/* Technologies */}
                 <div className="flex flex-wrap gap-2 pt-2">
-                  {project.technologies.map((tech) => (
+                  {project.technologies?.map((tech) => (
                     <span key={tech} className="px-3 py-1 bg-accent/10 text-accent text-xs font-medium rounded-full">
                       {tech}
                     </span>
